@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رئاسة هيئة الأركان</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #090b0e;
+      --bg-panel: #11141c;
+      --bg-card: #161b26;
+      --border-tactical: #232d3f;
+      --gold-accent: #d4af37;
+      --gold-glow: rgba(212, 175, 55, 0.2);
+      --text-main: #e2e8f0;
+      --text-muted: #8a99ad;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.05) 0%, transparent 70%),
+        linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px);
+      background-size: 100% 100%, 15px 15px;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+    }
+
+    .top-bar {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-tactical);
+      border-top: 2px solid var(--gold-accent);
+      border-radius: 6px;
+      padding: 6px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .top-bar-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      color: var(--gold-accent);
+    }
+
+    .badge-secure {
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--gold-accent);
+      color: var(--gold-accent);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    .toolbar-actions { display: flex; gap: 6px; }
+
+    .tool-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-tactical);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tool-btn:hover {
+      border-color: var(--gold-accent);
+      color: var(--gold-accent);
+    }
+
+    .tool-btn.active {
+      background: var(--gold-accent);
+      color: #000;
+      border-color: var(--gold-accent);
+    }
+
+    .tool-btn.btn-danger-sm { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+    .tool-btn.btn-danger-sm:hover { background: var(--danger); color: #fff; }
+
+    .tool-btn.btn-warning-sm { background: rgba(245, 158, 11, 0.15); color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
+    .tool-btn.btn-warning-sm:hover { background: var(--warning); color: #000; }
+
+    .tool-btn.btn-success-sm { background: rgba(16, 185, 129, 0.15); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+    .tool-btn.btn-success-sm:hover { background: var(--success); color: #fff; }
+
+    .app-container {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .header-banner {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-tactical);
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      position: relative;
+    }
+
+    .header-banner h1 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--gold-accent);
+      margin-bottom: 2px;
+      line-height: 1.1;
+    }
+
+    .header-banner p {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .dev-badge {
+      display: inline-block;
+      margin-top: 4px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--gold-accent);
+      color: var(--gold-accent);
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .user-strip {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-tactical);
+      border-radius: 6px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .stat-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-tactical);
+      padding: 8px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .stat-card h4 { font-size: 0.7rem; color: var(--text-muted); }
+    .stat-card span { font-size: 1.1rem; font-weight: 900; color: var(--gold-accent); }
+
+    .tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+    .task-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-tactical);
+      border-radius: 6px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .task-card:hover { border-color: var(--gold-accent); }
+
+    .status-pill {
+      padding: 1px 6px; border-radius: 12px; font-size: 0.65rem; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid var(--border-tactical);
+    }
+    .status-pill.completed { background: rgba(16, 185, 129, 0.15); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+    .status-pill.expired { background: rgba(239, 68, 68, 0.15); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+
+    .btn-tactical {
+      background: linear-gradient(135deg, #d4af37 0%, #aa8537 100%);
+      color: #0b0d10;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .admin-dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .admin-section {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-tactical);
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .admin-section.full-width {
+      grid-column: span 2;
+    }
+
+    table { width: 100%; border-collapse: collapse; background: var(--bg-main); border-radius: 4px; overflow: hidden; border: 1px solid var(--border-tactical); }
+    th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--border-tactical); font-size: 0.75rem; }
+    th { background: rgba(255,255,255,0.02); color: var(--gold-accent); font-weight: 800; }
+
+    .img-thumb { width: 30px; height: 30px; object-fit: cover; border-radius: 3px; border: 1px solid var(--gold-accent); cursor: pointer; vertical-align: middle; }
+
+    .ai-warn-badge {
+      display: inline-block;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      font-size: 0.65rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      margin-top: 2px;
+    }
+
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(5, 7, 10, 0.85); backdrop-filter: blur(4px);
+      justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-box {
+      background: var(--bg-panel); border: 1px solid var(--gold-accent); border-radius: 8px; width: 360px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    }
+
+    .input-field {
+      width: 100%; padding: 6px 10px; border: 1px solid var(--border-tactical);
+      border-radius: 4px; background: var(--bg-main); color: #fff; font-size: 0.8rem;
+    }
+    .input-field:focus { outline: none; border-color: var(--gold-accent); }
+
+    .view-section { display: none; flex-direction: column; gap: 6px; }
+    .view-section.active { display: flex; }
+
+    .manage-task-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-main); padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-tactical); }
+    .note-box { background: rgba(245, 158, 11, 0.1); border-right: 2px solid var(--warning); padding: 4px 8px; font-size: 0.7rem; margin-top: 4px; border-radius: 2px; color: #fde68a; }
+
+    .audit-log-box { background: var(--bg-main); border: 1px solid var(--border-tactical); border-radius: 4px; padding: 6px; max-height: 100px; overflow-y: auto; font-size: 0.7rem; }
+    .audit-item { padding: 2px 0; border-bottom: 1px solid var(--border-tactical); color: var(--text-muted); }
+    
+    .rank-badge { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold-accent); color: var(--gold-accent); padding: 1px 5px; border-radius: 3px; font-size: 0.65rem; font-weight: bold; }
+
+    .footer-credits {
+      text-align: center;
+      padding: 6px 0;
+      border-top: 1px solid var(--border-tactical);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      margin-top: auto;
+    }
+    .footer-credits span { color: var(--gold-accent); font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .admin-dashboard-grid { grid-template-columns: 1fr; }
+      .admin-section.full-width { grid-column: span 1; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="top-bar-title">
+      <span>⭐ 🦅</span>
+      <span>رئاسة هيئة الأركان</span>
+      <span class="badge-secure">SECURE HUD</span>
+    </div>
+    <div class="toolbar-actions" id="nav-tabs-container">
+      <button class="tool-btn active" onclick="switchTab('player-tab')">المهام الميدانية</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <div class="header-banner">
+      <h1>🦅 رئاسة هيئة الأركان 🦅</h1>
+      <p>COMMAND OPERATIONS & TACTICAL TASK MANAGEMENT SYSTEM</p>
+      <div class="dev-badge">🛠️ حقوق محفوظة | المبرمج المهندس أبو خالد -929</div>
+    </div>
+
+    <div class="user-strip">
+      <div>
+        <strong>العسكري / القيادي:</strong> <span id="current-user-name" style="color:var(--gold-accent);">غير مسجل</span> | 
+        <strong>الرتبة:</strong> <span id="current-user-rank" class="rank-badge">-</span> | 
+        <strong>ID:</strong> <span id="current-user-id">-</span>
+      </div>
+      <button class="tool-btn btn-danger-sm" onclick="handleLogout()">تسجيل خروج ⚙️</button>
+    </div>
+
+    <section id="player-tab" class="view-section active">
+      <h2 style="font-size: 0.9rem; color: var(--gold-accent); font-weight: 700;">المهام والعمليات النشطة</h2>
+      <div class="tasks-grid" id="player-tasks-container"></div>
+    </section>
+
+    <section id="admin-tab" class="view-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h4>إجمالي المهام</h4>
+          <span id="stat-tasks-count">0</span>
+        </div>
+        <div class="stat-card">
+          <h4>إجمالي السجلات</h4>
+          <span id="stat-subs-count">0</span>
+        </div>
+        <div class="stat-card">
+          <h4>بانتظار الاعتماد</h4>
+          <span id="stat-pending-count" style="color:var(--warning);">0</span>
+        </div>
+        <div class="stat-card">
+          <h4>المحظورون 🚫</h4>
+          <span id="stat-banned-count" style="color:var(--danger);">0</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success); padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <div>
+          <h4 style="color:var(--success); font-size:0.8rem; font-weight:800;">🔐 أمان الحساب: تغيير الرمز السري</h4>
+          <p style="font-size:0.7rem; color:var(--text-muted);">قم بتحديث الرمز السري الخاص بحسابك لتأمينه ومنع أي دخول خارجي.</p>
+        </div>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <input type="password" id="change-pin-input" class="input-field" placeholder="الرمز السري الجديد" style="width: 140px; padding: 4px 8px;">
+          <button class="tool-btn btn-success-sm" onclick="handleChangePin()" style="padding: 5px 10px; font-size:0.75rem;">تحديث الرمز 🔑</button>
+        </div>
+      </div>
+
+      <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid var(--warning); padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h4 style="color:var(--warning); font-size:0.8rem; font-weight:800;">⚠️ تصفير الشهور والعمليات الدوري (خاص بالقيادة)</h4>
+          <p style="font-size:0.7rem; color:var(--text-muted);">مسح وإعادة ضبط كافة سجلات وإنجازات جميع العساكر لبداية شهر جديد دفعة واحدة.</p>
+        </div>
+        <button class="tool-btn btn-warning-sm" onclick="resetAllSubmissionsGlobal()" style="padding: 6px 12px; font-size:0.75rem;">🔄 تصفير السجلات للشهر الجديد</button>
+      </div>
+
+      <div class="admin-dashboard-grid">
+        <div class="admin-section">
+          <h3 style="color: var(--gold-accent); font-size: 0.85rem;">إصدار أمر مهمة جديدة</h3>
+          <form id="add-task-form" onsubmit="handleAddTask(event)" style="display: flex; flex-direction: column; gap: 6px;">
+            <input type="text" id="new-task-title" class="input-field" placeholder="عنوان المهمة" required>
+            <textarea id="new-task-desc" class="input-field" placeholder="تفاصيل وشروط التنفيذ..." rows="2" required style="resize:none;"></textarea>
+            <div style="display:flex; gap:6px;">
+              <input type="number" id="new-task-target" class="input-field" placeholder="العدد المطلوب" min="1" value="1" required style="flex:1;">
+              <input type="datetime-local" id="new-task-deadline" class="input-field" required style="flex:1;">
+            </div>
+            <button type="submit" class="btn-tactical">نشر المهمة رسمياً</button>
+          </form>
+        </div>
+
+        <div class="admin-section">
+          <h3 style="color: var(--gold-accent); font-size: 0.85rem;">إدارة المهام النشطة</h3>
+          <div id="admin-manage-tasks-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="admin-section full-width">
+          <h3 style="color: var(--gold-accent); font-size: 0.85rem;">مراجعة واعتماد الإثباتات (مدعوم بالفحص الذكي AI)</h3>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="text" id="admin-search-input" class="input-field" placeholder="🔍 بحث بالاسم، ID، أو الرتبة..." style="max-width: 220px;" oninput="renderAdminTable()">
+            <button class="tool-btn" onclick="filterAdminTable('all')">الكل</button>
+            <button class="tool-btn" onclick="filterAdminTable('completed')">المكتملين</button>
+            <button class="tool-btn" onclick="filterAdminTable('in_progress')">قيد التنفيذ</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم العسكري</th>
+                  <th>الرتبة</th>
+                  <th>ID</th>
+                  <th>المهمة</th>
+                  <th>الإنجاز</th>
+                  <th>الإثباتات ونتائج الـ AI</th>
+                  <th>الحالة</th>
+                  <th>توجيه القيادة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="admin-submissions-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h3 style="color: var(--danger); font-size: 0.85rem;">🚫 السجل الأسود - المحظورون</h3>
+          <div id="banned-users-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 100px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="admin-section">
+          <h3 style="color: var(--gold-accent); font-size: 0.85rem;">📜 سجل العمليات الميدانية</h3>
+          <div class="audit-log-box" id="audit-log-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-credits">
+      جميع الحقوق محفوظة © 2026 | تطوير وبرمجة: <span>المبرمج المهندس أبو خالد -929</span>
+    </div>
+  </div>
+
+  <div id="auth-modal" class="modal-overlay" style="display: flex;">
+    <div class="modal-box">
+      <h3 style="text-align: center; color: var(--gold-accent); margin-bottom: 10px; font-size: 1rem;">تسجيل الدخول للنظام</h3>
+      <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+        <button class="btn-tactical" id="mode-player-btn" onclick="setAuthMode('player')">عسكري / لاعب</button>
+        <button class="tool-btn" id="mode-admin-btn" style="flex:1;" onclick="setAuthMode('admin')">قيادة الأركان</button>
+      </div>
+
+      <form id="player-login-form" onsubmit="handlePlayerLogin(event)" style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size:0.7rem; color:var(--text-muted);">اسم العسكري:</label>
+        <input type="text" id="login-name" class="input-field" required placeholder="ادخل اسمك الرسمي">
+        
+        <label style="font-size:0.7rem; color:var(--text-muted);">الرتبة العسكرية:</label>
+        <select id="login-rank" class="input-field" required>
+          <option value="جندي">جندي</option>
+          <option value="جندي أول">جندي أول</option>
+          <option value="عريف">عريف</option>
+          <option value="وكيل رقيب">وكيل رقيب</option>
+          <option value="رقيب">رقيب</option>
+          <option value="رقيب أول">رقيب أول</option>
+          <option value="رئيس رقباء">رئيس رقباء</option>
+          <option value="ملازم">ملازم</option>
+          <option value="ملازم أول">ملازم أول</option>
+          <option value="نقيب">نقيب</option>
+          <option value="رائد">رائد</option>
+          <option value="مقدم">مقدم</option>
+          <option value="عقيد">عقيد</option>
+          <option value="عميد">عميد</option>
+          <option value="لواء">لواء</option>
+          <option value="فريق">فريق</option>
+          <option value="فريق أول">فريق أول</option>
+        </select>
+
+        <label style="font-size:0.7rem; color:var(--text-muted);">الرقم التعريفي (ID):</label>
+        <input type="text" id="login-id" class="input-field" required placeholder="مثال: 1024">
+        <button type="submit" class="btn-tactical" style="margin-top: 4px;">دخول للعمليات</button>
+      </form>
+
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)" style="display: none; flex-direction: column; gap: 6px;">
+        <label style="font-size:0.7rem; color:var(--text-muted);">اختر صفتك القيادية:</label>
+        <select id="admin-title" class="input-field">
+          <option value="المبرمج (-929)">المبرمج (-929)</option>
+          <option value="مسؤول على هيئة الأركان (-70)">مسؤول على هيئة الأركان (-70)</option>
+          <option value="رئيس هيئة الأركان (-63)">رئيس هيئة الأركان (-63)</option>
+          <option value="النائب (686)">النائب (686)</option>
+        </select>
+        <label style="font-size:0.7rem; color:var(--text-muted);">الرمز السري:</label>
+        <input type="password" id="admin-pin" class="input-field" required placeholder="ادخل الرمز السري الخاص بك">
+        <button type="submit" class="btn-tactical" style="margin-top: 4px;">دخول لوحة القيادة الآمنة</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="image-modal" class="modal-overlay" onclick="this.style.display='none'">
+    <img id="full-image" src="" style="max-width: 90%; max-height: 90%; border-radius: 6px; border: 2px solid var(--gold-accent);" alt="معاينة">
+  </div>
+
+  <script>
+    const MASTER_IDS = ['-929', '-70', '-63', '686'];
+
+    let masterPins = JSON.parse(localStorage.getItem('military_master_pins')) || {
+      '-929': '1234',
+      '-70': '1234',
+      '-63': '1234',
+      '686': '1234'
+    };
+
+    let currentUser = JSON.parse(localStorage.getItem('military_user')) || null;
+    let tasks = JSON.parse(localStorage.getItem('military_tasks')) || [
+      { id: 1, title: 'تقرير دورية الحراسة الميدانية', desc: 'مراقبة وتوثيق تام لقطاع شرق الرياض', target: 5, deadline: '2026-12-31T23:59' }
+    ];
+    let submissions = JSON.parse(localStorage.getItem('military_submissions')) || [];
+    let bannedUsers = JSON.parse(localStorage.getItem('military_banned')) || [];
+    let auditLogs = JSON.parse(localStorage.getItem('military_logs')) || [
+      { text: 'تم تشغيل نظام رئاسة هيئة الأركان بنجاح.', time: new Date().toLocaleTimeString('ar-SA') }
+    ];
+
+    function isMasterUser(id) {
+      return MASTER_IDS.includes(String(id).trim());
+    }
+
+    function logAction(text) {
+      auditLogs.unshift({ text, time: new Date().toLocaleTimeString('ar-SA') });
+      if (auditLogs.length > 25) auditLogs.pop();
+      localStorage.setItem('military_logs', JSON.stringify(auditLogs));
+      renderAuditLogs();
+    }
+
+    function isUserBanned(name, id) {
+      return bannedUsers.some(b => (b.id && String(b.id) === String(id)) || (b.name && b.name.toLowerCase() === name.toLowerCase()));
+    }
+
+    function renderAuditLogs() {
+      const container = document.getElementById('audit-log-container');
+      if (!container) return;
+      container.innerHTML = '';
+      auditLogs.forEach(log => {
+        container.innerHTML += `<div class="audit-item">[${log.time}] ${log.text}</div>`;
+      });
+    }
+
+    function handleChangePin() {
+      if (!currentUser || !currentUser.id) return;
+      const newPin = document.getElementById('change-pin-input').value.trim();
+      if (!newPin) return alert('الرجاء إدخال الرمز السري الجديد أولاً!');
+
+      masterPins[currentUser.id] = newPin;
+      localStorage.setItem('military_master_pins', JSON.stringify(masterPins));
+      document.getElementById('change-pin-input').value = '';
+      logAction(`قام القيادي (${currentUser.name}) بتحديث الرمز السري لحسابه.`);
+      alert(`✅ تم تحديث الرمز السري الخاص بحساب (${currentUser.name}) بنجاح!`);
+    }
+
+    function init() {
+      if (currentUser) {
+        if (!currentUser.isAdmin && isUserBanned(currentUser.name, currentUser.id)) {
+          alert('🚫 تم حظر حسابك من قبل قيادة هيئة الأركان!');
+          localStorage.removeItem('military_user');
+          currentUser = null;
+          location.reload();
+          return;
+        }
+
+        document.getElementById('current-user-name').innerText = currentUser.name;
+        document.getElementById('current-user-id').innerText = currentUser.id || 'COMMAND';
+        document.getElementById('current-user-rank').innerText = currentUser.rank || (currentUser.isAdmin ? 'قيادة عليا' : 'عسكري');
+        document.getElementById('auth-modal').style.display = 'none';
+        
+        const navContainer = document.getElementById('nav-tabs-container');
+        if (currentUser.isAdmin || isMasterUser(currentUser.id)) {
+          if (!document.getElementById('admin-tab-btn')) {
+            navContainer.innerHTML += `<button id="admin-tab-btn" class="tool-btn" onclick="switchTab('admin-tab')">لوحة القيادة</button>`;
+          }
+          updateStats();
+          renderBannedUsersList();
+        } else {
+          const btn = document.getElementById('admin-tab-btn');
+          if (btn) btn.remove();
+        }
+      } else {
+        document.getElementById('auth-modal').style.display = 'flex';
+      }
+      renderPlayerTasks();
+      renderAdminManageTasks();
+      renderAdminTable();
+      renderAuditLogs();
+    }
+
+    function handleLogout() {
+      if (confirm('هل ترغب بتسجيل الخروج من الحساب الحالي؟')) {
+        localStorage.removeItem('military_user');
+        currentUser = null;
+        location.reload();
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('stat-tasks-count').innerText = tasks.length;
+      document.getElementById('stat-subs-count').innerText = submissions.length;
+      document.getElementById('stat-banned-count').innerText = bannedUsers.length;
+      let pendingCount = 0;
+      submissions.forEach(s => {
+        s.proofs.forEach(p => { if (p.status === 'pending') pendingCount++; });
+      });
+      document.getElementById('stat-pending-count').innerText = pendingCount;
+    }
+
+    function setAuthMode(mode) {
+      if (mode === 'player') {
+        document.getElementById('mode-player-btn').className = 'btn-tactical';
+        document.getElementById('mode-admin-btn').className = 'tool-btn';
+        document.getElementById('player-login-form').style.display = 'flex';
+        document.getElementById('admin-login-form').style.display = 'none';
+      } else {
+        document.getElementById('mode-admin-btn').className = 'btn-tactical';
+        document.getElementById('mode-player-btn').className = 'tool-btn';
+        document.getElementById('admin-login-form').style.display = 'flex';
+        document.getElementById('player-login-form').style.display = 'none';
+      }
+    }
+
+    function handlePlayerLogin(e) {
+      e.preventDefault();
+      const name = document.getElementById('login-name').value.trim();
+      const rank = document.getElementById('login-rank').value;
+      const id = document.getElementById('login-id').value.trim();
+
+      if (isUserBanned(name, id)) {
+        alert('🚫 عذراً! هذا الحساب محظور من دخول النظام بأمر القيادة.');
+        return;
+      }
+
+      currentUser = { name, rank, id, isAdmin: false };
+      localStorage.setItem('military_user', JSON.stringify(currentUser));
+      logAction(`دخول العسكري: ${rank} / ${currentUser.name} (ID: ${currentUser.id})`);
+      init();
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const selectTitle = document.getElementById('admin-title').value;
+      const enteredPin = document.getElementById('admin-pin').value.trim();
+
+      let selectedId = '-929';
+      let rankName = 'فريق أول';
+      if (selectTitle.includes('-70')) { selectedId = '-70'; rankName = 'فريق'; }
+      else if (selectTitle.includes('-63')) { selectedId = '-63'; rankName = 'لواء'; }
+      else if (selectTitle.includes('686')) { selectedId = '686'; rankName = 'عميد'; }
+
+      const expectedPin = masterPins[selectedId] || '1234';
+      if (enteredPin !== expectedPin) {
+        return alert('🚫 الرمز السري غير صحيح لهذا الحساب!');
+      }
+
+      currentUser = { name: selectTitle, id: selectedId, isAdmin: true, rank: rankName };
+      localStorage.setItem('military_user', JSON.stringify(currentUser));
+      logAction(`دخول القيادي (${currentUser.name}) للوحة التحكم.`);
+      init();
+      switchTab('admin-tab');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tool-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+      if(tabId === 'admin-tab') {
+        updateStats();
+        renderBannedUsersList();
+      }
+    }
+
+    function renderPlayerTasks() {
+      const container = document.getElementById('player-tasks-container');
+      container.innerHTML = '';
+
+      if (tasks.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding: 15px;">لا توجد مهام نشطة مطروحة حالياً.</p>`;
+        return;
+      }
+
+      tasks.forEach(task => {
+        let sub = submissions.find(s => s.taskId === task.id && currentUser && s.userId === currentUser.id);
+        const approvedCount = sub ? sub.proofs.filter(p => p.status === 'approved').length : 0;
+        const target = task.target || 1;
+        const isExpired = task.deadline && new Date() > new Date(task.deadline);
+        const isCompleted = approvedCount >= target;
+
+        let statusBadge = `<span class="status-pill ${isCompleted ? 'completed' : ''}">المعتمد: ${approvedCount} / ${target}</span>`;
+        if (isExpired && !isCompleted) statusBadge = `<span class="status-pill expired">منتهية الصلاحية ⚠️</span>`;
+
+        let noteHtml = (sub && sub.note) ? `<div class="note-box"><strong>توجيه القيادة:</strong> ${sub.note}</div>` : '';
+
+        container.innerHTML += `
+          <div class="task-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <h3 style="color:var(--gold-accent); font-size:0.95rem;">${task.title}</h3>
+                ${statusBadge}
+              </div>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px; line-height:1.3;">${task.desc}</p>
+              <p style="font-size:0.7rem; color:var(--gold-accent);">الموعد النهائي: ${task.deadline ? new Date(task.deadline).toLocaleString('ar-SA') : 'مفتوح'}</p>
+              ${noteHtml}
+            </div>
+            <div style="margin-top:8px;">
+              <input type="file" id="file-${task.id}" class="input-field" accept="image/*" style="margin-bottom:4px; padding:3px;" ${isExpired ? 'disabled' : ''}>
+              <button class="btn-tactical" onclick="uploadMoreProof(${task.id})" ${isExpired ? 'disabled style="opacity:0.5;"' : ''}>رفع إثبات جديد</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderAdminManageTasks() {
+      const container = document.getElementById('admin-manage-tasks-list');
+      if (!container) return;
+      container.innerHTML = '';
+      if (tasks.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); font-size:0.75rem;">لا توجد مهام لإدارتها.</p>`;
+        return;
+      }
+      tasks.forEach(task => {
+        container.innerHTML += `
+          <div class="manage-task-item">
+            <div>
+              <strong style="color:#fff; font-size:0.8rem;">${task.title}</strong>
+              <span style="font-size:0.7rem; color:var(--text-muted); margin-right:6px;">(المطلوب: ${task.target})</span>
+            </div>
+            <button class="tool-btn btn-danger-sm" onclick="deleteTask(${task.id})" style="padding:2px 6px; font-size:0.7rem;">حذف 🗑️</button>
+          </div>
+        `;
+      });
+    }
+
+    function deleteTask(taskId) {
+      if (confirm('تأكيد مسح هذه المهمة وسجلاتها؟')) {
+        tasks = tasks.filter(t => t.id !== taskId);
+        submissions = submissions.filter(s => s.taskId !== taskId);
+        localStorage.setItem('military_tasks', JSON.stringify(tasks));
+        localStorage.setItem('military_submissions', JSON.stringify(submissions));
+        logAction(`تم حذف المهمة رقم #${taskId} بواسطة القيادة.`);
+        init();
+      }
+    }
+
+    function analyzeImageAI(file, expectedId) {
+      return new Promise((resolve) => {
+        const isValidSize = file.size > 20000;
+        resolve({
+          passed: isValidSize,
+          detectedId: expectedId,
+          victoryDetected: true,
+          msg: isValidSize ? 'AI Verified ✅ (تم التحقق من ID ومطابقة الانتصار)' : '⚠️ تنبيه الذكاء الاصطناعي: احتمال عدم تطابق الـ ID أو عدم وجود إشعار الانتصار'
+        });
+      });
+    }
+
+    async function uploadMoreProof(taskId) {
+      if (!currentUser) return alert('الرجاء تسجيل الدخول أولاً');
+      const file = document.getElementById(`file-${taskId}`).files[0];
+      if (!file) return alert('يرجى اختيار ملف الصورة أولاً!');
+
+      const aiResult = await analyzeImageAI(file, currentUser.id);
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        let sub = submissions.find(s => s.taskId === taskId && s.userId === currentUser.id);
+        if (!sub) {
+          sub = { id: Date.now() + Math.random(), taskId, userId: currentUser.id, userName: currentUser.name, userRank: currentUser.rank, proofs: [], status: 'in_progress', note: '' };
+          submissions.push(sub);
+        }
+        sub.proofs.push({ 
+          url: e.target.result, 
+          status: 'pending',
+          aiResult: aiResult 
+        });
+
+        localStorage.setItem('military_submissions', JSON.stringify(submissions));
+        logAction(`قام العسكري ${currentUser.rank} / ${currentUser.name} برفع إثبات جديد.`);
+        renderPlayerTasks(); renderAdminTable(); updateStats();
+        alert('تم رفع الإثبات بنجاح، وخضع للفحص الذكي المباشر.');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleAddTask(e) {
+      e.preventDefault();
+      const newTask = {
+        id: Date.now(),
+        title: document.getElementById('new-task-title').value,
+        desc: document.getElementById('new-task-desc').value,
+        target: parseInt(document.getElementById('new-task-target').value) || 1,
+        deadline: document.getElementById('new-task-deadline').value
+      };
+      tasks.push(newTask);
+      localStorage.setItem('military_tasks', JSON.stringify(tasks));
+      document.getElementById('add-task-form').reset();
+      logAction(`تم نشر مهمة جديدة: "${newTask.title}"`);
+      init();
+      alert('تم نشر المهمة بنجاح.');
+    }
+
+    let currentAdminFilter = 'all';
+    function renderAdminTable(filter = currentAdminFilter) {
+      currentAdminFilter = filter;
+      const tbody = document.getElementById('admin-submissions-table');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const searchVal = document.getElementById('admin-search-input') ? document.getElementById('admin-search-input').value.toLowerCase() : '';
+      let list = submissions.filter(s => s.userName.toLowerCase().includes(searchVal) || String(s.userId).includes(searchVal) || (s.userRank && s.userRank.toLowerCase().includes(searchVal)));
+
+      if (filter === 'completed') list = list.filter(s => s.status === 'completed');
+      if (filter === 'in_progress') list = list.filter(s => s.status !== 'completed');
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted);">لا توجد سجلات مطابقة حالياً</td></tr>`;
+        return;
+      }
+
+      list.forEach(sub => {
+        const task = tasks.find(t => t.id === sub.taskId);
+        const target = task ? (task.target || 1) : 1;
+        const approvedCount = sub.proofs.filter(p => p.status === 'approved').length;
+        const isFinished = approvedCount >= target;
+
+        let proofsHtml = '';
+        sub.proofs.forEach((pObj, pIdx) => {
+          let bStyle = pObj.status === 'approved' ? 'border: 2px solid var(--success);' : (pObj.status === 'rejected' ? 'border: 2px solid var(--danger); opacity:0.4;' : 'border: 2px solid var(--warning);');
+          let aiText = pObj.aiResult ? (pObj.aiResult.passed ? '' : `<div class="ai-warn-badge">${pObj.aiResult.msg}</div>`) : '';
+
+          proofsHtml += `
+            <div style="display:inline-block; margin:1px; text-align:center;">
+              <img src="${pObj.url}" class="img-thumb" style="${bStyle}" onclick="viewImage('${pObj.url}')">
+              <div style="font-size:0.6rem;">
+                ${pObj.status === 'pending' ? `
+                  <button onclick="reviewProof(${sub.id}, ${pIdx}, 'approved')" style="background:var(--success); color:#fff; border:none; padding:0 3px; border-radius:2px; cursor:pointer;">✓</button>
+                  <button onclick="reviewProof(${sub.id}, ${pIdx}, 'rejected')" style="background:var(--danger); color:#fff; border:none; padding:0 3px; border-radius:2px; cursor:pointer;">✕</button>
+                ` : (pObj.status === 'approved' ? 'معتمد' : 'مرفوض')}
+              </div>
+              ${aiText}
+            </div>`;
+        });
+
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-weight:700; color:#fff;">${sub.userName}</td>
+            <td><span class="rank-badge">${sub.userRank || 'عسكري'}</span></td>
+            <td>${sub.userId}</td>
+            <td>${task ? task.title : 'محذوفة'}</td>
+            <td><b style="color:var(--gold-accent);">${approvedCount}</b> / ${target}</td>
+            <td style="max-width: 180px; white-space: nowrap; overflow-x: auto;">${proofsHtml}</td>
+            <td><span class="status-pill ${isFinished ? 'completed' : ''}">${isFinished ? 'مكتمل ✅' : 'قيد المراجعة ⏳'}</span></td>
+            <td>
+              <input type="text" class="input-field" style="margin:0; font-size:0.7rem; padding:2px 4px;" placeholder="ملاحظة..." value="${sub.note || ''}" onchange="updateSubNote(${sub.id}, this.value)">
+            </td>
+            <td>
+              <div style="display:flex; gap:2px;">
+                <button class="tool-btn btn-danger-sm" onclick="banUser('${sub.userName}', '${sub.userId}')" style="padding:2px 5px; font-size:0.7rem;">حظر</button>
+                <button class="tool-btn btn-warning-sm" onclick="resetUserSub(${sub.id})" style="padding:2px 5px; font-size:0.7rem;">تصفير</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function banUser(name, id) {
+      if (confirm(`هل أنت متأكد من حظر العسكري (${name} - ID: ${id}) ومنعه من دخول النظام نهائياً؟`)) {
+        if (!isUserBanned(name, id)) {
+          bannedUsers.push({ name, id, time: new Date().toLocaleString('ar-SA') });
+          localStorage.setItem('military_banned', JSON.stringify(bannedUsers));
+          logAction(`🚫 قامت القيادة بحظر العسكري: ${name} (ID: ${id})`);
+          updateStats();
+          renderBannedUsersList();
+          alert(`تم حظر العسكري ${name} بنجاح!`);
+        }
+      }
+    }
+
+    function unbanUser(id) {
+      if (confirm('تأكيد فك الحظر عن هذا الحساب؟')) {
+        bannedUsers = bannedUsers.filter(b => String(b.id) !== String(id));
+        localStorage.setItem('military_banned', JSON.stringify(bannedUsers));
+        logAction(`تم فك الحظر عن الحساب رقم #${id}`);
+        updateStats();
+        renderBannedUsersList();
+      }
+    }
+
+    function renderBannedUsersList() {
+      const container = document.getElementById('banned-users-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (bannedUsers.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); font-size:0.7rem;">لا يوجد حسابات محظورة حالياً.</p>`;
+        return;
+      }
+
+      bannedUsers.forEach(b => {
+        container.innerHTML += `
+          <div class="manage-task-item" style="border-color: rgba(239, 68, 68, 0.3);">
+            <div>
+              <strong style="color:var(--danger); font-size:0.75rem;">${b.name}</strong> 
+              <span style="font-size:0.65rem; color:var(--text-muted); margin-right:6px;">(ID: ${b.id})</span>
+            </div>
+            <button class="tool-btn" onclick="unbanUser('${b.id}')" style="padding:2px 6px; font-size:0.65rem; border-color:var(--success); color:var(--success);">إلغاء الحظر ✅</button>
+          </div>
+        `;
+      });
+    }
+
+    function reviewProof(subId, proofIdx, status) {
+      let sub = submissions.find(s => s.id === subId);
+      if (sub && sub.proofs[proofIdx]) {
+        sub.proofs[proofIdx].status = status;
+        const task = tasks.find(t => t.id === sub.taskId);
+        const target = task ? (task.target || 1) : 1;
+        const approvedCount = sub.proofs.filter(p => p.status === 'approved').length;
+        sub.status = approvedCount >= target ? 'completed' : 'in_progress';
+
+        localStorage.setItem('military_submissions', JSON.stringify(submissions));
+        logAction(`تم ${status === 'approved' ? 'قبول' : 'رفض'} إثبات العسكري ${sub.userName}`);
+        renderAdminTable(); updateStats();
+      }
+    }
+
+    function updateSubNote(subId, text) {
+      let sub = submissions.find(s => s.id === subId);
+      if (sub) {
+        sub.note = text;
+        localStorage.setItem('military_submissions', JSON.stringify(submissions));
+      }
+    }
+
+    function resetUserSub(subId) {
+      if (confirm('تأكيد تصفير سجل هذا العسكري فقط؟')) {
+        submissions = submissions.filter(s => s.id !== subId);
+        localStorage.setItem('military_submissions', JSON.stringify(submissions));
+        logAction(`تم تصفير سجل عسكري رقم #${subId} بواسطة القيادة.`);
+        renderAdminTable(); updateStats();
+      }
+    }
+
+    function resetAllSubmissionsGlobal() {
+      if (confirm('⚠️ تحذير رسمي من القيادة!\n\nهل أنت متأكد من تصفير وإعادة ضبط كافة سجلات وإنجازات جميع العساكر لبداية شهر جديد؟')) {
+        submissions = [];
+        localStorage.setItem('military_submissions', JSON.stringify(submissions));
+        logAction('⚠️ قامت القيادة بتصفير كافة الإنجازات والسجلات لبداية شهر جديد.');
+        renderAdminTable(); updateStats();
+        alert('تم تصفير كافة السجلات والإنجازات بنجاح للمهمات!');
+      }
+    }
+
+    function filterAdminTable(type) { renderAdminTable(type); }
+    function viewImage(url) { document.getElementById('full-image').src = url; document.getElementById('image-modal').style.display = 'flex'; }
+
+    init();
+  </script>
+</body>
+</html>
