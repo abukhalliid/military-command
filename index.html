@@ -740,7 +740,8 @@
 
       const reader = new FileReader();
       reader.onload = function(e) {
-        let sub = submissions.find(s => s.taskId === taskId && s.userId === currentUser.id);
+        // تم التعديل هنا: البحث عن السجل الخاص بالمهمة المحددة والمستخدم الحالي بشكل منفصل تماماً لكل مهمة
+        let sub = submissions.find(s => s.taskId === taskId && String(s.userId) === String(currentUser.id));
         if (!sub) {
           sub = { id: Date.now() + Math.random(), taskId, userId: currentUser.id, userName: currentUser.name, userRank: currentUser.rank, proofs: [], status: 'in_progress', note: '' };
           submissions.push(sub);
@@ -752,9 +753,9 @@
         });
 
         localStorage.setItem('military_submissions', JSON.stringify(submissions));
-        logAction(`قام العسكري ${currentUser.rank} / ${currentUser.name} برفع إثبات جديد.`);
+        logAction(`قام العسكري ${currentUser.rank} / ${currentUser.name} برفع إثبات جديد للمهمة #${taskId}.`);
         renderPlayerTasks(); renderAdminTable(); updateStats();
-        alert('تم رفع الإثبات بنجاح، وخضع للفحص الذكي المباشر.');
+        alert('تم رفع الإثبات للمهمة بنجاح، ويمكنك الانتقال لرفع إثباتات للمهمات الأخرى بحرية.');
       };
       reader.readAsDataURL(file);
     }
